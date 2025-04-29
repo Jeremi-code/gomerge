@@ -21,6 +21,15 @@ func Start(branch_name string) {
 	fmt.Println("Starting the app with branch name:", branch_name)
 }
 
+func RunCommand(command string) {
+	cmd := exec.Command("bash", "-c", command)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(output))
+}
+
 func isBackend() bool {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -36,38 +45,20 @@ func isBackend() bool {
 	return isBackend
 }
 
-func switchBranch(branchName string) {
+func SwitchBranch(branchName string) {
 	fmt.Println("Switching to branch:", branchName)
-	err := exec.Command("git", "checkout", branchName).Run()
-	if err != nil {
-		err = exec.Command("git", "stash").Run()
-		if err != nil {
-			fmt.Println("Error stashing changes:", err)
-		}
-		err = exec.Command("git", "checkout", branchName).Run()
-		if err != nil {
-			fmt.Println("Error switching branches:", err)
-		}
-	}
+	RunCommand("git checkout " + branchName)
+	RunCommand("git stash")
+	RunCommand("git checkout " + branchName)
 }
 
-func pullBranch() {
-	err := exec.Command("git", "pull").Run()
-	if err != nil {
-		fmt.Println("Error pulling branch:", err)
-	}
+func PullBranch() {
+	RunCommand("git pull")
 }
 
-func mergeBranch(branchName string) {
-	err := exec.Command("git", "switch", branchName).Run()
-	if err != nil {
-		fmt.Println("Error switching to branch:", err)
-		return
-	}
-	err = exec.Command("git", "merge", branchName).Run()
-	if err != nil {
-		fmt.Println("Error merging branch:", err)
-	}
+func MergeBranch(branchName string) {
+	RunCommand("git switch " + branchName)
+	RunCommand("git merge " + branchName)
 }
 
 func GetBranch() (string, error) {
@@ -83,4 +74,13 @@ func GetBranch() (string, error) {
 		return "", err
 	}
 	return config.BranchName, nil
+}
+
+func InitiateDocker() {
+	RunCommand("docker compose up --build -w")
+}
+
+func UploadMigration() {
+	InitiateDocker()
+	RunCommand("yarn")
 }
