@@ -82,5 +82,5 @@ func InitiateDocker() {
 
 func UploadMigration() {
 	InitiateDocker()
-	RunCommand("yarn")
+	RunCommand("yarn migrate")
 }
