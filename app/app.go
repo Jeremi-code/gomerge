@@ -84,3 +84,8 @@ func UploadMigration() {
 	InitiateDocker()
 	RunCommand("yarn migrate")
 }
+
+func OpenTerminal(command string){
+	RunCommand("ghostty -c " + command)
+
+}
