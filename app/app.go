@@ -11,14 +11,11 @@ import (
 
 type Config struct {
 	BranchName string `json:"branch"`
+	FolderDirectory string `json:"folder-directory"`
 }
 
 func Start(branch_name string) {
-	var isBackend bool = isBackend()
-	if isBackend {
-		fmt.Println("this is backend project")
-	}
-	fmt.Println("Starting the app with branch name:", branch_name)
+	
 }
 
 func RunCommand(command string) {
@@ -30,24 +27,14 @@ func RunCommand(command string) {
 	fmt.Println(string(output))
 }
 
-func isBackend() bool {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	var dirSplit = strings.SplitAfter(dir, "/")
-	var fileName = dirSplit[len(dirSplit)-1]
-	if len(fileName) == 0 {
-		log.Fatal("Error: File name is empty")
-	}
+func IsBackend() bool {
+	fileName := GetFileName()
 	var isBackend = strings.Contains(fileName, "api")
 
 	return isBackend
 }
 
 func SwitchBranch(branchName string) {
-	fmt.Println("Switching to branch:", branchName)
-	RunCommand("git checkout " + branchName)
 	RunCommand("git stash")
 	RunCommand("git checkout " + branchName)
 }
@@ -56,36 +43,57 @@ func PullBranch() {
 	RunCommand("git pull")
 }
 
-func MergeBranch(branchName string) {
-	RunCommand("git switch " + branchName)
-	RunCommand("git merge " + branchName)
+func MergeBranch(sourceBranchName string, targetBranchName string) {
+	RunCommand("git switch " + targetBranchName)
+	RunCommand("git merge " + sourceBranchName)
 }
 
 func GetBranch() (string, error) {
-	dat, err := os.ReadFile(".myapprc")
-	if err != nil {
-		fmt.Println("Error reading file:", err)
-		return "", err
-	}
-	var config Config
-	err = json.Unmarshal(dat, &config)
-	if err != nil {
-		fmt.Println("Error unmarshalling JSON:", err)
-		return "", err
-	}
+	config := ReadConfigFile()
 	return config.BranchName, nil
 }
 
 func InitiateDocker() {
-	RunCommand("docker compose up --build -w")
+	OpenTerminal("docker compose up --build -w")
 }
 
 func UploadMigration() {
 	InitiateDocker()
-	RunCommand("yarn migrate")
+	OpenTerminal("yarn migrate")
 }
 
-func OpenTerminal(command string){
+func OpenTerminal(command string) {
 	RunCommand("ghostty -c " + command)
 
+}
+
+func ReadConfigFile() Config {
+	dat, err := os.ReadFile(".myapprc")
+	if err != nil {
+		log.Fatal(err)
+	}
+	var config Config
+	err = json.Unmarshal(dat, &config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return config
+}
+
+func GetCurrentDirectory() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return dir
+}
+
+func GetFileName() string {
+	dir := GetCurrentDirectory()
+	var dirSplit = strings.SplitAfter(dir, "/")
+	var fileName = dirSplit[len(dirSplit)-1]
+	if len(fileName) == 0 {
+		log.Fatal("Error: File name is empty")
+	}
+	return fileName
 }

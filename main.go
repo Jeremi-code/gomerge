@@ -1,26 +1,29 @@
 package main
 
 import (
-	// "flag"
-	"fmt"
-	"github.com/jeremi-code/gomerge/app"
 	"os"
+	"strings"
+	"github.com/jeremi-code/gomerge/app"
 )
 
 func main() {
 
-	if len(os.Args) == 1 {
-		branchName,err:=app.GetBranch()
-		if(err!=nil){
-			panic(err)
+	if len(os.Args) == 2 {
+		dir := app.GetCurrentDirectory()
+		workFolder := app.ReadConfigFile().FolderDirectory
+		if strings.Contains(dir, workFolder) {
+			app.RunCommand("cd" + " " + os.Args[1])
+			isBackend := app.IsBackend()
+			if isBackend {
+				app.UploadMigration()
+				app.SwitchBranch("dev")
+				app.MergeBranch("dev", "fix/issues")
+			} else {
+				app.SwitchBranch("div")
+				app.MergeBranch("dev", "fix/issues")
+			}
+
 		}
-		fmt.Println("Current branch name:", branchName)
-		
+
 	}
-	fmt.Println("Starting the app...", os.Args[0])
-	// branch := flag.String("branch", "", "Branch name to start the app with")
-	// flag.Parse()
-
-	// app.Start(*branch)
-
 }
