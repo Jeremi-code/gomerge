@@ -1,10 +1,5 @@
 package app
 
-func InitiateDocker() {
-	OpenTerminal("docker compose up --build -w")
-}
-
 func UploadMigration() {
-	InitiateDocker()
-	OpenTerminal("yarn migrate")
+	OpenTerminal("docker compose up --build -w && yarn migrate")
 }
