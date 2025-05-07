@@ -1,9 +1,9 @@
 package app
 
 import (
-	"os/exec"
 	"fmt"
 	"log"
+	"os/exec"
 )
 
 func RunCommand(command string) {
@@ -18,10 +18,10 @@ func RunCommand(command string) {
 }
 
 func OpenTerminal(command string) {
-	cmd := exec.Command("ghostty", "-e", command)
-    err := cmd.Start()
-    if err != nil {
-        log.Fatalf("Failed to start Ghostty: %v", err)
-    }
-
+	fmt.Println("Opening terminal with command:", command)
+	cmd := exec.Command("ghostty", "-e", "bash", "-c", "\""+command+"\"")
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("Failed to start Ghostty: %v", err)
+	}
 }
