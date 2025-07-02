@@ -14,7 +14,11 @@ type Config struct {
 }
 
 func ReadConfigFile() Config {
-	dat, err := os.ReadFile(".myapprc")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	dat, err := os.ReadFile(homeDir + "/.visrc")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,16 +33,22 @@ func ReadConfigFile() Config {
 }
 
 func WriteConfigFile(recentFile string) {
-	 config := ReadConfigFile()
-	 config.RecentFile = recentFile
-	 fmt.Println("Writing config file with recent file:", config)
+	config := ReadConfigFile()
+	config.RecentFile = recentFile
+
+	homeDir, err := os.UserHomeDir()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Writing config file with recent file:", config)
 
 	dat, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(string(dat))
-	err = os.WriteFile("../.myapprc", dat, 0644)
+	err = os.WriteFile(homeDir+"/.visrc", dat, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
