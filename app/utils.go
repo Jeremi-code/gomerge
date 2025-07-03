@@ -33,7 +33,6 @@ func IsBackend(folderName string) bool {
 // }
 
 func RunWorkflow(branch string,folderName string) error {
-	WriteConfigFile(folderName)
     SwitchBranch("dev")
     PullBranch()
     MergeBranch("dev", branch)
