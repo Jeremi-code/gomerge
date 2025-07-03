@@ -17,6 +17,9 @@ func main() {
 	branchName := flag.String("branch", "", "Branch to use")
 	branchNameShort := flag.String("b", "", "Branch to use (short)")
 
+	help := flag.Bool("help", false, "Show help")
+	helpShort := flag.Bool("h", false, "Show help (short)")
+
 	flag.Parse()
 
 	config := app.ReadConfigFile()
@@ -47,6 +50,21 @@ func main() {
 		} else {
 			targetFolder = *folderName
 		}
+	case *help || *helpShort:
+		color.Cyan(`
+GoMerge - A modern merge tool for vistec
+
+Flags:
+  -recent, -r           Open recent file
+  -folder, -f <name>    Folder to open
+  -branch, -b <name>    Branch to use
+  -help, -h             Show this help message
+
+Examples:
+  gomerge -recent
+  gomerge -folder myfolder
+  gomerge -branch feature-xyz
+`)
 
 	case flag.NArg() > 0:
 		targetFolder = flag.Arg(0)
