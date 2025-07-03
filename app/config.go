@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 )
@@ -10,17 +9,17 @@ import (
 type Config struct {
 	BranchName      string `json:"branch"`
 	FolderDirectory string `json:"folder-directory"`
-	RecentFile      string `json:"recent-file"`
+	RecentFolder    string `json:"recent-folder"`
 }
 
 func ReadConfigFile() Config {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to read config file", err)
 	}
 	dat, err := os.ReadFile(homeDir + "/.visrc")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to read config file", err)
 	}
 	var config Config
 
@@ -28,28 +27,26 @@ func ReadConfigFile() Config {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Config file read successfully", string(dat))
 	return config
 }
 
-func WriteConfigFile(recentFile string) {
+func WriteConfigFile(recentFolder string) {
 	config := ReadConfigFile()
-	config.RecentFile = recentFile
+	config.RecentFolder = recentFolder
 
 	homeDir, err := os.UserHomeDir()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to write into config file", err)
 	}
-	fmt.Println("Writing config file with recent file:", config)
 
 	dat, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to marshal config to JSON", err)
 	}
-	fmt.Println(string(dat))
+	
 	err = os.WriteFile(homeDir+"/.visrc", dat, 0644)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to write into config file", err)
 	}
 }
