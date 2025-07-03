@@ -1,29 +1,21 @@
 package app
 
 import (
+	"log"
 	"os"
+	"path/filepath"
 )
 
-func Start() {
-	dir := GetCurrentDirectory()
-	workFolder := ReadConfigFile().FolderDirectory
-	branch, err := GetBranch()
-	if err != nil {
-		return
-	}
-
+func Start(config *Config, targetFolder string) {
+	workFolder := config.FolderDirectory
+	branch := config.BranchName
 	if branch == "" {
 		branch = "fix-issues"
 	}
-
-	if dir == workFolder {
-		os.Chdir(os.Args[1])
-		RunWorkflow(branch, IsBackend())
-	} else {
-		err := os.Chdir(workFolder + "/" + os.Args[1])
-		if err != nil {
-			return
-		}
-		RunWorkflow(branch, IsBackend())
+	err := os.Chdir(filepath.Join(workFolder, targetFolder))
+	if err != nil {
+		log.Fatal("Error changing directory:", err)
+		return
 	}
+	RunWorkflow(branch, targetFolder)
 }
