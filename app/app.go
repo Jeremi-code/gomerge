@@ -9,6 +9,8 @@ import (
 func Start(config *Config, targetFolder string) {
 	workFolder := config.FolderDirectory
 	branch := config.BranchName
+	WriteConfigFile(*config)
+
 	if branch == "" {
 		branch = "fix-issues"
 	}
