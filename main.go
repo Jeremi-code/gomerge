@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/jeremi-code/gomerge/app"
 )
 
@@ -51,7 +52,16 @@ func main() {
 		targetFolder = flag.Arg(0)
 
 	default:
-		fmt.Println("No file or folder specified, starting app...")
+		color.Green(`
+  ________            _____                                  
+ /  _____/   ____    /     \    ____ _______   ____    ____  
+/   \  ___  /  _ \  /  \ /  \ _/ __ \\_  __ \ / ___\ _/ __ \ 
+\    \_\  \(  <_> )/    Y    \\  ___/ |  | \// /_/  >\  ___/ 
+ \______  / \____/ \____|__  / \___  >|__|   \___  /  \___  >
+        \/                 \/      \/       /_____/       \/ 
+`)
+		color.Cyan("Welcome to GoMerge!")
+		color.Green("Ready to merge your branches with style.")
 		return
 	}
 
