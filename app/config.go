@@ -30,10 +30,13 @@ func ReadConfigFile() Config {
 	return config
 }
 
-func WriteConfigFile(recentFolder string) {
+func SetBranch(branchName string) Config {
 	config := ReadConfigFile()
-	config.RecentFolder = recentFolder
+	config.BranchName = branchName
+	return config
+}
 
+func WriteConfigFile(config Config) {
 	homeDir, err := os.UserHomeDir()
 
 	if err != nil {
